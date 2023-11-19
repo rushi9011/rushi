@@ -85,4 +85,12 @@
   "itemStatus": 0
 }
 
+"errors": {
+    "request": [
+      "The request field is required."
+    ],
+    "$.projectItemDetails.secondryAttributeDetails[0].categoryId": [
+      "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.projectItemDetails.secondryAttributeDetails[0].categoryId | LineNumber: 14 | BytePositionInLine: 60."
+    ]
+
 
