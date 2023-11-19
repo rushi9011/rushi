@@ -33,3 +33,8 @@
   "userId": "78023cd3-6b8f-4605-96fe-a21a76d25890",
   "itemStatus": 0
 }
+
+
+ "$.projectItemDetails.secondryAttributeDetails[0].categoryId": [
+      "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.projectItemDetails.secondryAttributeDetails[0].categoryId | LineNumber: 15 | BytePositionInLine: 24."
+    ]
