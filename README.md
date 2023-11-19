@@ -34,3 +34,10 @@
   "userId": "78023cd3-6b8f-4605-96fe-a21a76d25890",
   "itemStatus": 0
 }
+
+
+
+
+"$.projectItemDetails.itemTitleId": [
+      "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.projectItemDetails.itemTitleId | LineNumber: 4 | BytePositionInLine: 21."
+    ]
