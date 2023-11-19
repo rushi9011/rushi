@@ -94,3 +94,40 @@
     ]
 
 
+    {
+  "projectId": "c6ff6fa5-b899-484d-5b10-08dbd6088a47",
+  "projectItemDetails": {
+    "itemId": "cb2ed70d-efc0-4d8b-bf94-8f7de8404a3f",
+    "itemTitleId": "550e8400-e29b-41d4-a716-446655440000",
+    "itemTitle": "Q1",
+    "itemText": "Hello, World...",
+    "itemMark": 0,
+    "instruction": "Fill in the instruction here",
+    "comprehensionId": "4a4b2c5d-6e8f-47c9-b4b8-3d9b854d29fc",
+    "itemTypeId": "31809012-5198-4841-7e3e-08dbd6088a8e",
+    "languageId": "7ed54625-9ffa-469e-7d73-08dbd6088ab7",
+    "secondryAttributeDetails": [
+      {
+        "categoryId": "aabbccdd-1234-5678-90ab-eeffgghhiijj",  // Replace with the actual category ID (should be a valid GUID)
+        "attributeValueId": "12345678-abcd-efgh-ijkl-987654321000"  // Replace with the actual attribute value ID
+      }
+    ],
+    "remarks": "Add any remarks here",
+    "currentItemStepId": "b7858c30-3eea-4d39-f086-08dbd6088bb8",
+    "options": [
+      {
+        "optionId": "297784df-d874-47ef-8154-08dbe0ea5dce",
+        "optionText": "Option A",
+        "optionCode": "1",
+        "optionMark": 0,
+        "exclusive": true,
+        "lockPosition": true
+      }
+    ]
+  },
+  "userId": "78023cd3-6b8f-4605-96fe-a21a76d25890",
+  "itemStatus": 0
+}
+
+
+
