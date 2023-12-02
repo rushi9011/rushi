@@ -1,0 +1,90 @@
+  [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [MustHavePermission(FSHAction.Update, FSHResource.Papers)]
+    [OpenApiOperation("Update a Paper.", "")]
+    public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdatePaperRequest request, DefaultIdType id)
+    {
+        return id != request.PaperID
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+
+
+
+using CQ.ExamManagement.Application.Entities.Groups.Command;
+using CQ.ExamManagement.Application.Entities.Groups;
+using CQ.ExamManagement.Application.Entities.PaperItemEntity.Specification;
+
+namespace CQ.ExamManagement.Application.Entities.Papers.Command;
+public class UpdatePaperRequest : IRequest<StandardApiResponse>
+{
+    public DefaultIdType PaperID { get; set; }
+    public string PaperTitle { get; set; } = default!;
+    public string PaperCode { get; set; } = default!;
+    public DefaultIdType ExamId { get; set; }
+    public int? TotalSection { get; set; }
+    public int? TotalQuesion { get; set; }
+    public decimal? TotalMarks { get; set; } = default!;
+    public int? Duration { get; set; } = default!;
+    public int? LoginTime { get; set; } = default!;
+    public int? ReportingTime { get; set; } = default!;
+    public bool? IsOnSpotResult { get; set; } = false;
+    public int? SubmtExamDuration { get; set; } = 0;
+}
+
+public class UpdatePaperRequestHandler : IRequestHandler<UpdatePaperRequest, StandardApiResponse>
+{
+    private readonly IStringLocalizer<UpdatePaperRequestHandler> _localizer;
+    private readonly IPapermanagementService _papermanagementService;
+    private readonly IPaperService _paperService;
+
+    public UpdatePaperRequestHandler(
+        IPapermanagementService papermanagementService,
+        IPaperService paperService,
+        IStringLocalizer<UpdatePaperRequestHandler> localizer)
+    {
+        _papermanagementService = papermanagementService;
+        _paperService = paperService;
+        _localizer = localizer;
+    }
+
+    public async Task<StandardApiResponse> Handle(UpdatePaperRequest updatepaperrequest, CancellationToken cancellationToken)
+    {
+        var paperToCheck = await _paperService.GetPaperByPaperTitleandPaperCode(
+            papertitle: updatepaperrequest.PaperTitle,
+            /*papercode: updatepaperrequest.PaperCode,*/
+            papercode: string.IsNullOrEmpty(updatepaperrequest.PaperCode) ? updatepaperrequest.PaperTitle : updatepaperrequest.PaperCode,
+            paperid: updatepaperrequest.PaperID,
+            cancellationToken: cancellationToken);
+
+        if (paperToCheck != null)
+        {
+            throw new ConflictException(string.Format(_localizer["Paper.PaperTitleAndCodeAlreadyExists"]));
+        }
+
+        if (updatepaperrequest.TotalSection <= 0)
+        {
+            throw new ConflictException(string.Format(_localizer["Paper.TotalSectionCannotbelessthanzero"]));
+        }
+
+        if (updatepaperrequest.TotalQuesion < 0)
+        {
+            throw new ConflictException(string.Format(_localizer["Paper.TotalQuestionCannotbelessthanzero"]));
+        }
+
+        if (updatepaperrequest.TotalMarks < 0)
+        {
+            throw new ConflictException(string.Format(_localizer["Paper.TotalMarksCannotbelessthanzero"]));
+        }
+
+        var paperid = await _paperService.UpdatePaper(updatepaperrequest, cancellationToken);
+
+        return new StandardApiResponse(message: _localizer["Paper.UpdateSuccess", paperid], true);
+    }
+}
+
+
