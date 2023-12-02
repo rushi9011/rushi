@@ -99,6 +99,17 @@ public class UpdatePaperRequestHandler : IRequestHandler<UpdatePaperRequest, Sta
         return new StandardApiResponse(message: _localizer["Paper.UpdateSuccess", paperid], true);
     }
 }
+public interface IPaperItemManagementService : ITransientService
+{
+    Task<StandardApiResponse> AssignItemsToPaper(AssginItemsToPaperRequest request, CancellationToken cancellationToken);
+    Task<PaperItemDto> AddItemsToPaper(AddItemToPaperRequest request, CancellationToken cancellationToken);
+    Task<List<PaperItemCountDto>>GetPaperItemCount(ItemCountByPaperIdRequest request, CancellationToken cancellationToken);
+    Task<StandardApiResponse> AddComprehentionToPaper(AddComprehentionToPaperRequest request, CancellationToken cancellationToken);
+    Task<Paper> IsValidPaper(DefaultIdType PaperId, DefaultIdType SectionId, DefaultIdType SetId, DefaultIdType PaperLanguageId, CancellationToken cancellationToken);
+    Task<List<ItemsDetailsDto>> GetPaperItems(List<DefaultIdType> itemDetailIds, CancellationToken cancellationToken);
+    Task CreatePaperItemWithProject(List<LanguageDto> languageDto, List<SectionDto> sectionDto, List<SetDto> setDto, List<GetItemDetailsDto> itemDto);
+    Task<List<GetItemDetailsDto>> GetItemDetails(List<DefaultIdType> itemDetailIds, CancellationToken cancellationToken);
+}
 
 
 
