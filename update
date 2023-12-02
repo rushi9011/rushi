@@ -35,6 +35,19 @@ public class UpdatePaperRequest : IRequest<StandardApiResponse>
     public bool? IsOnSpotResult { get; set; } = false;
     public int? SubmtExamDuration { get; set; } = 0;
 }
+namespace CQ.ExamManagement.Application.Common.ApiResponses;
+public class StandardApiResponse
+{
+    public string Message { get; }
+    public bool IsSuccess { get; }
+
+    public StandardApiResponse(string message, bool isSuccess = false)
+    {
+        Message = message;
+        IsSuccess = isSuccess;
+    }
+}
+
 
 public class UpdatePaperRequestHandler : IRequestHandler<UpdatePaperRequest, StandardApiResponse>
 {
