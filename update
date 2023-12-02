@@ -312,5 +312,14 @@ public class UpdateSequenceNumberRequestHandler : IRequestHandler<UpdateSequence
 }
 
 
+public interface IPaperItemManagementService : ITransientService
+{
+    // Existing methods...
+
+    Task UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber);
+}
+
+
+
 
 
