@@ -88,3 +88,141 @@ public class UpdatePaperRequestHandler : IRequestHandler<UpdatePaperRequest, Sta
 }
 
 
+
+
+
+
+
+
+using CQ.ExamManagement.Application.Entities.PaperItemEntity.Command;
+using CQ.ExamManagement.Application.Entities.PaperItemEntity.DTO;
+using CQ.ExamManagement.Application.Entities.PaperItemEntity.Query;
+
+namespace CQ.ExamManagement.Host.Controllers.PaperItem;
+
+public class PaperItemController : VersionedApiController
+{
+    /// <summary>
+    /// Assigned items to Paper.
+    /// </summary>
+    /// <response code="200">Success! New PaperDetails Created.</response>
+    /// <response code="400">Bad Request! PaperDetails has missing or invalid values.</response>
+    /// <response code="401">UnAuthoriszed! You are not authorized to perform this operation.</response>
+    /// <response code="500">Internal Error! Can't Create PaperDetails right now.</response>
+    [HttpPost]
+    [MustHavePermission(FSHAction.Create, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("Assigned Items to Paper.", "")]
+    public Task<StandardApiResponse> CreateAsync(AssginItemsToPaperRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    /// <summary>
+    /// Add item to Paper.
+    /// </summary>
+    /// <response code="200">Success! New PaperDetails Created.</response>
+    /// <response code="400">Bad Request! PaperDetails has missing or invalid values.</response>
+    /// <response code="401">UnAuthoriszed! You are not authorized to perform this operation.</response>
+    /// <response code="500">Internal Error! Can't Create PaperDetails right now.</response>
+    [HttpPost("AddItemToPaper")]
+    [MustHavePermission(FSHAction.Create, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("Add Item to Paper.", "")]
+    public Task<PaperItemDto> AddItemToPaper(AddItemToPaperRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    /// <summary>
+    /// Retrive ItemCount by Set and Language.
+    /// </summary>
+    /// <response code="200">Success! Retrieved Paper.</response>
+    /// <response code="400">Bad Request! Paper has missing or invalid values.</response>
+    /// <response code="401">UnAuthoriszed! You are not authorized to perform this operation.</response>
+    /// <response code="404">Not Found! Paper details not found.</response>
+    /// <response code="500">Internal Error! Can't Find Paper Details right now.</response>
+    [HttpGet]
+    [MustHavePermission(FSHAction.View, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("Get a ItemCount by PaperId.", "")]
+    public Task<List<PaperItemCountDto>> GetAsync(DefaultIdType paperId)
+    {
+        return Mediator.Send(new ItemCountByPaperIdRequest(paperId));
+    }
+
+    /// <summary>
+    /// Add Comprehention to Paper.
+    /// </summary>
+    /// <response code="200">Success! New Comprehention Created.</response>
+    /// <response code="400">Bad Request! Comprehention has missing or invalid values.</response>
+    /// <response code="401">UnAuthoriszed! You are not authorized to perform this operation.</response>
+    /// <response code="500">Internal Error! Can't Create Comprehention right now.</response>
+    [HttpPost("CreateOrUpdateComprehention")]
+    [MustHavePermission(FSHAction.Create, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("CreateOrUpdate Comprehention to Paper.", "")]
+    public Task<StandardApiResponse> AddComprehentionToPaper(AddComprehentionToPaperRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    /// <summary>
+    /// ItemCount By PaperId.
+    /// </summary>
+    /// <response code="200">Success! New Comprehention Created.</response>
+    /// <response code="400">Bad Request! Comprehention has missing or invalid values.</response>
+    /// <response code="401">UnAuthoriszed! You are not authorized to perform this operation.</response>
+    /// <response code="500">Internal Error! Can't Create Comprehention right now.</response>
+    [HttpPost("ItemCount")]
+    [MustHavePermission(FSHAction.Create, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("ItemCount by PaperId.", "")]
+    public Task<PaginationResponse<PaperItemCountDto>> SearchItemCount(ItemCountByPaperIdSearchRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    [HttpPost("GetPaperItems")]
+    [MustHavePermission(FSHAction.View, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("Get PaperItems by ItemDetailIds.", "")]
+    public Task<List<ItemsDetailsDto>> GetPaperItems(GetPaperItemsRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    [HttpPost("GetItemDetails")]
+    [MustHavePermission(FSHAction.View, FSHResource.Papers)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [OpenApiOperation("Get ItemDetails by ItemDetailIds.", "")]
+    public Task<List<GetItemDetailsDto>> GetItemDetails(GetItemDetailsRequest request)
+    {
+        return Mediator.Send(request);
+    }
+}
+
+
+
