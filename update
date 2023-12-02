@@ -238,4 +238,68 @@ public class PaperItemController : VersionedApiController
 }
 
 
+--------------------------------------------
+
+ /// <summary>
+        /// Update SequenceNumber for an Item in a Paper.
+        /// </summary>
+        /// <response code="200">Success! SequenceNumber Updated.</response>
+        /// <response code="400">Bad Request! Invalid values or missing parameters.</response>
+        /// <response code="401">Unauthorized! You are not authorized to perform this operation.</response>
+        /// <response code="404">Not Found! Paper or Item not found.</response>
+        /// <response code="500">Internal Error! Can't update SequenceNumber right now.</response>
+        [HttpPut("UpdateSequenceNumber")]
+        [MustHavePermission(FSHAction.Update, FSHResource.Papers)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        [OpenApiOperation("Update SequenceNumber for an Item in a Paper.", "")]
+        public Task<StandardApiResponse> UpdateSequenceNumber(UpdateSequenceNumberRequest request)
+        {
+            return Mediator.Send(request);
+        }
+my code
+
+// UpdateSequenceNumberRequest
+public class UpdateSequenceNumberRequest : IRequest<StandardApiResponse>
+{
+    public DefaultIdType PaperId { get; set; }
+    public DefaultIdType SetId { get; set; }
+    public DefaultIdType SectionId { get; set; }
+    public int SequenceNumber { get; set; }
+}
+
+// UpdateSequenceNumberRequestHandler
+public class UpdateSequenceNumberRequestHandler : IRequestHandler<UpdateSequenceNumberRequest, StandardApiResponse>
+{
+    private readonly IPaperItemService _paperItemService;
+
+    public UpdateSequenceNumberRequestHandler(IPaperItemService paperItemService)
+    {
+        _paperItemService = paperItemService;
+    }
+
+    public async Task<StandardApiResponse> Handle(UpdateSequenceNumberRequest request, CancellationToken cancellationToken)
+    {
+        // Implement your logic to update the sequence number using _paperItemService.
+
+        // Example:
+        var result = await _paperItemService.UpdateSequenceNumber(request.PaperId, request.SetId, request.SectionId, request.SequenceNumber, cancellationToken);
+
+        if (result)
+        {
+            return new StandardApiResponse("SequenceNumber updated successfully.", true);
+        }
+        else
+        {
+            // Handle the case where the update fails.
+            return new StandardApiResponse("Failed to update SequenceNumber.", false);
+        }
+    }
+}
+
+
+
 
