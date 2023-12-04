@@ -318,6 +318,10 @@ public interface IPaperItemManagementService : ITransientService
 
     Task UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber);
 }
+ public Task<bool> UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
 
 
