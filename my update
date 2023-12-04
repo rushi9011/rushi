@@ -53,3 +53,54 @@ public class UpdateSequenceNumberRequestHandler : IRequestHandler<UpdateSequence
     {
         throw new NotImplementedException();
     }
+
+
+
+
+public interface IPaperItemService
+{
+    // ... other methods
+
+    Task<bool> UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber, CancellationToken cancellationToken);
+}
+
+public class PaperItemService : IPaperItemService
+{
+    private readonly IPaperItemRepository _paperItemRepository; // Assuming you have a repository for PaperItems
+
+    public PaperItemService(IPaperItemRepository paperItemRepository)
+    {
+        _paperItemRepository = paperItemRepository;
+    }
+
+    // ... other methods
+
+    public async Task<bool> UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Retrieve the paper item based on PaperId, SetId, and SectionId
+            var existingPaperItem = await _paperItemRepository.GetByPaperSetAndSectionAsync(paperId, setId, sectionId);
+
+            if (existingPaperItem == null)
+            {
+                // Paper item not found, return false or throw an exception based on your design
+                return false;
+            }
+
+            // Update the sequence number
+            existingPaperItem.SequenceNumber = sequenceNumber;
+
+            // Save the changes to the repository
+            await _paperItemRepository.UpdateAsync(existingPaperItem);
+
+            return true;
+        }
+        catch (Exception)
+        {
+            // Handle exceptions, log errors, and return false or throw an exception based on your design
+            return false;
+        }
+    }
+}
+
