@@ -1,0 +1,55 @@
+ [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [MustHavePermission(FSHAction.Update, FSHResource.Papers)]
+    [OpenApiOperation("Update Sequence Number.", "")]
+    public async Task<ActionResult<StandardApiResponse>> UpdateSequenceNumber(UpdateSequenceNumberRequest request, string paperId)
+    {
+        return paperId.ToString().ToLower() != request.PaperId.ToString().ToLower()
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+
+    using CQ.ExamManagement.Application.Entities.PaperItemEntity.Interfaces;
+
+namespace CQ.ExamManagement.Application.Entities.PaperItemEntity.Command;
+public class UpdateSequenceNumberRequest : IRequest<StandardApiResponse>
+{
+    public DefaultIdType PaperId { get; set; }
+    public DefaultIdType SetId { get; set; }
+    public DefaultIdType SectionId { get; set; }
+    public int SequenceNumber { get; set; }
+}
+
+public class UpdateSequenceNumberRequestHandler : IRequestHandler<UpdateSequenceNumberRequest, StandardApiResponse>
+{
+    private readonly IPaperItemService _paperItemService;
+
+    public UpdateSequenceNumberRequestHandler(IPaperItemService paperItemService)
+    {
+        _paperItemService = paperItemService;
+    }
+
+    public async Task<StandardApiResponse> Handle(UpdateSequenceNumberRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _paperItemService.UpdateSequenceNumber(request.PaperId, request.SetId, request.SectionId, request.SequenceNumber, cancellationToken);
+
+        if (result)
+        {
+            return new StandardApiResponse("SequenceNumber updated successfully.", true);
+        }
+        else
+        {
+ 
+            return new StandardApiResponse("Failed to update SequenceNumber.", false);
+        }
+    }
+}
+
+ public Task<bool> UpdateSequenceNumber(DefaultIdType paperId, DefaultIdType setId, DefaultIdType sectionId, int sequenceNumber, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
