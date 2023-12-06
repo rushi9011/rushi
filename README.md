@@ -130,4 +130,24 @@
 }
 
 
+SELECT TOP 1000 [Id]
+      ,[SectionId]
+      ,[SetId]
+      ,[ItemDetailsId]
+      ,[SequenceNo]
+      ,[LanguageId]
+      ,[CreatedBy]
+      ,[CreatedOn]
+      ,[LastModifiedBy]
+      ,[LastModifiedOn]
+      ,[DeletedOn]
+      ,[DeletedBy]
+  FROM [ExamManagement].[Paper].[Item]
+secid A71F6000-4793-4B92-7308-08DBF281513C
+set id F0990AC4-036E-4B03-5857-08DBF281514F
+pep id FD5596CD-4813-4034-FD88-08DBF281512D
+ item det 06FC1CA3-4C73-4D48-48A7-08DBF63EF176
+ created aby 3BE6840E-61A7-4166-B981-96E6F67B4612
+ creted on 2023-12-06 09:46:25.4628056
+
 
