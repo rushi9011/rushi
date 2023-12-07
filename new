@@ -1,0 +1,14 @@
+  [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [MustHavePermission(FSHAction.Update, FSHResource.Papers)]
+    [OpenApiOperation("Update Sequence Number.", "")]
+    public async Task<ActionResult<StandardApiResponse>> UpdateSequenceNumber(UpdateSequenceNumberRequest request, string paperId)
+    {
+        return paperId.ToString().ToLower() != request.PaperId.ToString().ToLower()
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
