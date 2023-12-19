@@ -288,7 +288,7 @@ namespace User.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("UserId,Username,Password,Name")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Password,Name")] User user)
         {
             if (id != user.UserId)
             {
@@ -339,7 +339,7 @@ namespace User.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.User == null)
             {
@@ -355,12 +355,13 @@ namespace User.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int? id)
+        private bool UserExists(int id)
         {
           return (_context.User?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
     }
 }
+
 
 
 
