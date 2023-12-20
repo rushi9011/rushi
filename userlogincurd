@@ -280,3 +280,69 @@ error.cshtml
 
 
 
+
+--------------------------------------------------------------------------------------------------------------
+
+dotnet ef migrations add AddLoginFields
+dotnet ef database update
+
+
+@model UserApplication.Models.User
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<form asp-action="Login" method="post">
+    <div class="form-group">
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+------------------------------------------------------------------------
+
+// Add this action to UsersController
+// GET: Users/Login
+public IActionResult Login()
+{
+    return View();
+}
+
+// POST: Users/Login
+[HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Login(User user)
+{
+    // Implement your authentication logic here
+    // Example: Check if the provided username and password are valid
+    if (user.Username == "your_valid_username" && user.Password == "your_valid_password")
+    {
+        // Authentication successful, redirect to the homepage or another page
+        return RedirectToAction("Index", "Home");
+    }
+    else
+    {
+        // Authentication failed, display an error message
+        ModelState.AddModelError(string.Empty, "Invalid username or password");
+        return View(user);
+    }
+}
+
+-------------------------------------------------------------------------
+<!-- Add this link to the navigation bar in _Layout.cshtml -->
+<li class="nav-item">
+    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+</li>
+
+
+
+
+
+
