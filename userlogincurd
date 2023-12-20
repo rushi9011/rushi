@@ -342,6 +342,59 @@ public IActionResult Login(User user)
 </li>
 
 
+-------------------------------------------------------------------------------------
+
+
+// UsersController.cs
+public class UsersController : Controller
+{
+    // ... (existing code)
+
+    // GET: Users/Login
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    // POST: Users/Login
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Login(User user)
+    {
+        if (ModelState.IsValid)
+        {
+            // Replace the following with your actual authentication logic
+            if (IsValidUser(user.Username, user.Password))
+            {
+                // Authentication successful
+                // Store user information in a session, cookie, or use ASP.NET Core Identity
+                // For simplicity, storing the username in a session here
+                HttpContext.Session.SetString("Username", user.Username);
+
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Authentication failed, display an error message
+                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                return View(user);
+            }
+        }
+
+        // If ModelState is not valid, return to the login page with validation errors
+        return View(user);
+    }
+
+    private bool IsValidUser(string username, string password)
+    {
+        // Replace this with your actual user authentication logic
+        // For simplicity, using hardcoded values for demonstration purposes
+        return username == "your_valid_username" && password == "your_valid_password";
+    }
+}
+
+
+
 
 
 
