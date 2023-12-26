@@ -1,0 +1,63 @@
+using Microsoft.AspNetCore.Mvc;
+using UserApplication.Data;
+
+namespace UserApplication.Controllers
+{
+    public class PageSectionController : Controller
+    {
+       
+
+            private readonly UserApplicationContext _context;
+
+            public PageSectionController(UserApplicationContext context)
+            {
+                _context = context;
+            }
+
+            // Action to display the page editor
+            public IActionResult Edit(int id)
+            {
+                PageSections page = _context.PageSections.Find(id);
+                return View(page);
+            }
+
+            // Action to save the edited page to the database
+            [HttpPost]
+            public IActionResult Edit(PageSections page)
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.PageSections.Update(page);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index"); // Redirect to the page listing
+                }
+                return View(page);
+            }
+
+            // Action to publish the page to the file system
+            public IActionResult Publish(int id)
+            {
+                PageSections page = _context.PageSections.Find(id);
+
+                // Create an HTML file with the page content
+                string htmlContent = $@"
+            <html>
+                <head><title>{page.Header}</title></head>
+                <body>
+                    <header>{page.Header}</header>
+                    <footer>{page.Footer}</footer>
+                    <div id='left'>{page.Left}</div>
+                    <div id='right'>{page.Right}</div>
+                    <div id='center'>{page.Center}</div>
+                </body>
+            </html>";
+
+                // Save the HTML content to a file (you might want to specify a unique file name)
+                string filePath = $"wwwroot/pages/{id}.html";
+                System.IO.File.WriteAllText(filePath, htmlContent);
+
+                return RedirectToAction("Index"); // Redirect to the page listing
+            }
+        }
+    }
+}
