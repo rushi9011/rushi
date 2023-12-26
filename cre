@@ -91,7 +91,12 @@ public class PageSectionController : Controller
 <span asp-validation-for="Center" class="text-danger"></span>
 
 
-
+app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+        });
 
 
 @* Add this link to your Index.cshtml or relevant view *@
