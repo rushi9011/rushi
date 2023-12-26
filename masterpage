@@ -1,62 +1,78 @@
-// Controllers/HomeController.cs
-public class HomeController : Controller
+public class PageSections
 {
-    private readonly AppDbContext _dbContext;
+    public int Id { get; set; }
+    public string Header { get; set; }
+    public string Footer { get; set; }
+    public string Left { get; set; }
+    public string Right { get; set; }
+    public string Center { get; set; }
+}
 
-    public HomeController(AppDbContext dbContext)
+
+public class PageSectionController : Controller
+{
+    private readonly UserApplicationContext _context;
+
+    public PageSectionController(UserApplicationContext context)
     {
-        _dbContext = dbContext;
+        _context = context;
     }
 
-    public IActionResult Index()
+    // Action to display the page editor
+    public IActionResult Edit(int id)
     {
-        var sectionViewModel = new SectionViewModel
-        {
-            HeaderContent = GetSectionByName("Header")?.Content,
-            FooterContent = GetSectionByName("Footer")?.Content,
-            LeftContent = GetSectionByName("Left")?.Content,
-            RightContent = GetSectionByName("Right")?.Content,
-            CenterContent = GetSectionByName("Center")?.Content
-        };
-
-        return View(sectionViewModel);
+        PageSections page = _context.PageSections.Find(id);
+        return View(page);
     }
 
+    // Action to save the edited page to the database
     [HttpPost]
-    public IActionResult SaveSections(SectionViewModel model)
+    public IActionResult Edit(PageSections page)
     {
-        SaveOrUpdateSection("Header", model.HeaderContent);
-        SaveOrUpdateSection("Footer", model.FooterContent);
-        SaveOrUpdateSection("Left", model.LeftContent);
-        SaveOrUpdateSection("Right", model.RightContent);
-        SaveOrUpdateSection("Center", model.CenterContent);
-
-        return RedirectToAction("Index");
+        if (ModelState.IsValid)
+        {
+            _context.PageSections.Update(page);
+            _context.SaveChanges();
+            return RedirectToAction("Index"); // Redirect to the page listing
+        }
+        return View(page);
     }
 
-    private Section GetSectionByName(string name)
+    // Action to publish the page to the file system
+    public IActionResult Publish(int id)
     {
-        return _dbContext.Sections.SingleOrDefault(s => s.Name == name);
-    }
+        PageSections page = _context.PageSections.Find(id);
 
-    private void SaveOrUpdateSection(string name, string content)
-    {
-        var existingSection = GetSectionByName(name);
+        // Create an HTML file with the page content
+        string htmlContent = $@"
+            <html>
+                <head><title>{page.Header}</title></head>
+                <body>
+                    <header>{page.Header}</header>
+                    <footer>{page.Footer}</footer>
+                    <div id='left'>{page.Left}</div>
+                    <div id='right'>{page.Right}</div>
+                    <div id='center'>{page.Center}</div>
+                </body>
+            </html>";
 
-        if (existingSection != null)
-        {
-            existingSection.Content = content;
-            _dbContext.SaveChanges();
-        }
-        else
-        {
-            var newSection = new Section
-            {
-                Name = name,
-                Content = content
-            };
-            _dbContext.Sections.Add(newSection);
-            _dbContext.SaveChanges();
-        }
+        // Save the HTML content to a file (you might want to specify a unique file name)
+        string filePath = $"wwwroot/pages/{id}.html";
+        System.IO.File.WriteAllText(filePath, htmlContent);
+
+        return RedirectToAction("Index"); // Redirect to the page listing
     }
 }
+
+
+
+@model PageSections
+
+<form asp-action="Edit">
+    <input asp-for="Header" />
+    <input asp-for="Footer" />
+    <textarea asp-for="Left"></textarea>
+    <textarea asp-for="Right"></textarea>
+    <textarea asp-for="Center"></textarea>
+    <input type="submit" value="Save" />
+</form>
