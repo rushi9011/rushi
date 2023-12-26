@@ -1,103 +1,153 @@
-@model UserApplication.Data.PageSections
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Page</title>
-</head>
-<body>
-    <h2>Create Page</h2>
-
-    @using (Html.BeginForm("Create", "PageSection", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-
-        <div>
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div>
-                <label asp-for="Header"></label>
-                <input asp-for="Header" class="form-control" />
-                <span asp-validation-for="Header" class="text-danger"></span>
-            </div>
-
-            <!-- Add similar sections for other properties: Footer, Left, Right, Center -->
-
-            <div>
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index">Back to List</a>
-            </div>
-        </div>
-    }
-</body>
-</html>
-
-
-
-public class PageSectionController : Controller
+public class PageSection
 {
-    private readonly UserApplicationContext _context;
-
-    public PageSectionController(UserApplicationContext context)
-    {
-        _context = context;
-    }
-
-    // Action to display the form for creating a new page
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // Action to handle the creation of a new page
-    [HttpPost]
-    public IActionResult Create(PageSections page)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.PageSections.Add(page);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        return View(page);
-    }
-
-    // Other actions...
-
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Content { get; set; }
 }
 
 
 
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-<label asp-for="Header">Header:</label>
-<input asp-for="Header" class="form-control" value="Sample Header" />
-<span asp-validation-for="Header" class="text-danger"></span>
+public class PageSectionController : Controller
+{
+    private readonly PageDbContext _dbContext;
 
-<label asp-for="Footer">Footer:</label>
-<input asp-for="Footer" class="form-control" value="Sample Footer" />
-<span asp-validation-for="Footer" class="text-danger"></span>
+    public PageSectionController(PageDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
-<label asp-for="Left">Left Content:</label>
-<textarea asp-for="Left" class="form-control">Sample Left Content</textarea>
-<span asp-validation-for="Left" class="text-danger"></span>
+    // Action to display the page editor
+    public IActionResult EditPage()
+    {
+        var sections = _dbContext.PageSections.ToList();
+        return View(sections);
+    }
 
-<label asp-for="Right">Right Content:</label>
-<textarea asp-for="Right" class="form-control">Sample Right Content</textarea>
-<span asp-validation-for="Right" class="text-danger"></span>
-
-<label asp-for="Center">Center Content:</label>
-<textarea asp-for="Center" class="form-control">Sample Center Content</textarea>
-<span asp-validation-for="Center" class="text-danger"></span>
-
-
-app.UseEndpoints(endpoints =>
+    // Action to handle user input and save to the database
+    [HttpPost]
+    public IActionResult SaveSections(List<PageSection> sections)
+    {
+        foreach (var section in sections)
         {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-        });
+            if (section.Id == 0)
+            {
+                // New section, add to the database
+                _dbContext.PageSections.Add(section);
+            }
+            else
+            {
+                // Existing section, update in the database
+                _dbContext.Entry(section).State = EntityState.Modified;
+            }
+        }
+
+        _dbContext.SaveChanges();
+
+        return RedirectToAction("EditPage");
+    }
+
+    // Action to retrieve content from the database and generate HTML page
+    public IActionResult GeneratePage()
+    {
+        var sections = _dbContext.PageSections.ToList();
+        var combinedContent = CombineSections(sections);
+
+        // Save combinedContent as an HTML file
+        SaveAsHtmlFile(combinedContent);
+
+        return RedirectToAction("EditPage");
+    }
+
+    // Action to publish the HTML page to a configured directory
+    public IActionResult PublishPage()
+    {
+        var combinedContent = CombineSections(_dbContext.PageSections.ToList());
+
+        // Save combinedContent as an HTML file
+        var filePath = SaveAsHtmlFile(combinedContent);
+
+        // Configure the destination directory for publishing
+        var destinationDirectory = "C:\\PublishDirectory";
+
+        // Implement publishing logic - copy the file to the destination directory
+        try
+        {
+            var destinationFilePath = Path.Combine(destinationDirectory, "publishedPage.html");
+            System.IO.File.Copy(filePath, destinationFilePath, true);
+            ViewBag.PublishMessage = "Page published successfully!";
+        }
+        catch (Exception ex)
+        {
+            ViewBag.PublishMessage = $"Publishing failed: {ex.Message}";
+        }
+
+        return RedirectToAction("EditPage");
+    }
+
+    // Helper method to combine sections into HTML content
+    private string CombineSections(List<PageSection> sections)
+    {
+        var combinedContent = string.Join("", sections.Select(s => s.Content));
+        return combinedContent;
+    }
+
+    // Helper method to save HTML content as a file and return the file path
+    private string SaveAsHtmlFile(string content)
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "combinedPage.html");
+
+        using (var writer = new StreamWriter(filePath))
+        {
+            writer.Write(content);
+        }
+
+        return filePath;
+    }
+}
 
 
-@* Add this link to your Index.cshtml or relevant view *@
-<a asp-action="Create">Create New</a>
+
+@model List<PageSection>
+
+<h2>Edit Page</h2>
+
+@using (Html.BeginForm("SaveSections", "PageSection", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(model => Model[i].Id)
+                        @Html.EditorFor(model => Model[i].Name)
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(model => Model[i].Content, new { rows = 4, cols = 40 })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <input type="submit" value="Save" class="btn btn-primary" />
+}
+
+<div>
+    <a asp-action="GeneratePage" class="btn btn-success">Generate Page</a>
+    <a asp-action="PublishPage" class="btn btn-info">Publish Page</a>
+</div>
