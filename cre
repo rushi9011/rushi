@@ -70,6 +70,29 @@ public class PageSectionController : Controller
 
 
 
+<label asp-for="Header">Header:</label>
+<input asp-for="Header" class="form-control" value="Sample Header" />
+<span asp-validation-for="Header" class="text-danger"></span>
+
+<label asp-for="Footer">Footer:</label>
+<input asp-for="Footer" class="form-control" value="Sample Footer" />
+<span asp-validation-for="Footer" class="text-danger"></span>
+
+<label asp-for="Left">Left Content:</label>
+<textarea asp-for="Left" class="form-control">Sample Left Content</textarea>
+<span asp-validation-for="Left" class="text-danger"></span>
+
+<label asp-for="Right">Right Content:</label>
+<textarea asp-for="Right" class="form-control">Sample Right Content</textarea>
+<span asp-validation-for="Right" class="text-danger"></span>
+
+<label asp-for="Center">Center Content:</label>
+<textarea asp-for="Center" class="form-control">Sample Center Content</textarea>
+<span asp-validation-for="Center" class="text-danger"></span>
+
+
+
+
 
 @* Add this link to your Index.cshtml or relevant view *@
 <a asp-action="Create">Create New</a>
