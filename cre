@@ -1,0 +1,75 @@
+@model UserApplication.Data.PageSections
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Page</title>
+</head>
+<body>
+    <h2>Create Page</h2>
+
+    @using (Html.BeginForm("Create", "PageSection", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div>
+                <label asp-for="Header"></label>
+                <input asp-for="Header" class="form-control" />
+                <span asp-validation-for="Header" class="text-danger"></span>
+            </div>
+
+            <!-- Add similar sections for other properties: Footer, Left, Right, Center -->
+
+            <div>
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    }
+</body>
+</html>
+
+
+
+public class PageSectionController : Controller
+{
+    private readonly UserApplicationContext _context;
+
+    public PageSectionController(UserApplicationContext context)
+    {
+        _context = context;
+    }
+
+    // Action to display the form for creating a new page
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    // Action to handle the creation of a new page
+    [HttpPost]
+    public IActionResult Create(PageSections page)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.PageSections.Add(page);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        return View(page);
+    }
+
+    // Other actions...
+
+}
+
+
+
+
+
+@* Add this link to your Index.cshtml or relevant view *@
+<a asp-action="Create">Create New</a>
