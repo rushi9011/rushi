@@ -1,78 +1,64 @@
-public class PageSections
-{
-    public int Id { get; set; }
-    public string Header { get; set; }
-    public string Footer { get; set; }
-    public string Left { get; set; }
-    public string Right { get; set; }
-    public string Center { get; set; }
-}
+     <!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Your Page Title</title>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }}
 
+        header, footer {{
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }}
 
-public class PageSectionController : Controller
-{
-    private readonly UserApplicationContext _context;
+        section {{
+            display: flex;
+            justify-content: space-between;
+        }}
 
-    public PageSectionController(UserApplicationContext context)
-    {
-        _context = context;
-    }
+        aside {{
+            width: 20%;
+            background-color: #f2f2f2;
+            padding: 10px;
+        }}
 
-    // Action to display the page editor
-    public IActionResult Edit(int id)
-    {
-        PageSections page = _context.PageSections.Find(id);
-        return View(page);
-    }
+        main {{
+            flex: 1;
+            padding: 220px;
+        }}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{header}</h1>
+    </header>
 
-    // Action to save the edited page to the database
-    [HttpPost]
-    public IActionResult Edit(PageSections page)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.PageSections.Update(page);
-            _context.SaveChanges();
-            return RedirectToAction("Index"); // Redirect to the page listing
-        }
-        return View(page);
-    }
+    <section>
+        <aside>
+            <h2>{left}</h2>
+             
+        </aside>
 
-    // Action to publish the page to the file system
-    public IActionResult Publish(int id)
-    {
-        PageSections page = _context.PageSections.Find(id);
+        <main>
+            <h2>{center}</h2>
+            <!-- Add main content here -->
+        </main>
 
-        // Create an HTML file with the page content
-        string htmlContent = $@"
-            <html>
-                <head><title>{page.Header}</title></head>
-                <body>
-                    <header>{page.Header}</header>
-                    <footer>{page.Footer}</footer>
-                    <div id='left'>{page.Left}</div>
-                    <div id='right'>{page.Right}</div>
-                    <div id='center'>{page.Center}</div>
-                </body>
-            </html>";
+        <aside>
+            <h2>{right}</h2>
+            <!-- Add right sidebar content here -->
+        </aside>
+    </section>
 
-        // Save the HTML content to a file (you might want to specify a unique file name)
-        string filePath = $"wwwroot/pages/{id}.html";
-        System.IO.File.WriteAllText(filePath, htmlContent);
-
-        return RedirectToAction("Index"); // Redirect to the page listing
-    }
-}
-
-
-
-@model PageSections
-
-<form asp-action="Edit">
-    <input asp-for="Header" />
-    <input asp-for="Footer" />
-    <textarea asp-for="Left"></textarea>
-    <textarea asp-for="Right"></textarea>
-    <textarea asp-for="Center"></textarea>
-    <input type="submit" value="Save" />
-</form>
+    <footer>
+        <p>{footer}</p>
+    </footer>
+</body>
+</html>
