@@ -1,4 +1,83 @@
-!DOCTYPE html>
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using UserApplication.Data;
+using UserApplication.Migrations;
+using UserApplication.Models;
+using PageSections = UserApplication.Models.PageSections;
+
+namespace UserApplication.Controllers
+{
+    public class PageSectionController : Controller
+    {
+
+
+        private readonly UserApplicationContext _context;
+
+        public PageSectionController(UserApplicationContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Users
+        public async Task<IActionResult> Index()
+        {
+            return _context.PageSection != null ?
+                        View(await _context.PageSection.ToListAsync()) :
+                        Problem("Entity set 'UserApplicationContext.User'  is null.");
+        }
+
+        // Action to display the form for creating a new page
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // Action to handle the creation of a new page
+        [HttpPost]
+        public IActionResult Create(PageSections page)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.PageSection.Add(page);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(page);
+        }
+
+
+        // Action to display the page editor
+        public IActionResult Edit(int id)
+        {
+            PageSections page = _context.PageSection.Find(id);
+            return View(page);
+        }
+
+        // Action to save the edited page to the database
+        [HttpPost]
+        public IActionResult Edit(PageSections page)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.PageSection.Update(page);
+                _context.SaveChanges();
+                Publish(page.Id);
+                return RedirectToAction("Index"); // Redirect to the page listing
+            }
+            return View(page);
+        }
+
+        // Action to publish the page to the file system
+        public IActionResult Publish(int id)
+        {
+            PageSections page = _context.PageSection.Find(id);
+
+            // Create an HTML file with the page content
+            string htmlContent = $@"
+       <!DOCTYPE html>
         <html lang=""en"">
         <head>
             <meta charset=""UTF-8"">
@@ -25,7 +104,7 @@
                 }}
 
                 aside {{
-                    width: 20%;
+                    width: 10%;
                     background-color: #f2f2f2;
                     padding: 10px;
                 }}
@@ -43,30 +122,45 @@
         </head>
         <body>
             <header>
-                <h1></h1>
+
+                <h1>{page.Header}</h1>
+                 <div id=""htmlHeaderEditor"">
+                        <!--Header Editor will be initialized here -->
+                    </div>
+                
             </header>
 
             <section>
                 <aside>
-                    <h2></h2>
+                    <h2>{page.Left}</h2>
+                    <div id=""htmlLeftEditor"" style=""align=""vertical"">
+                        <!--Left Editor will be initialized here -->
+                    </div>
+
                 </aside>
 
                 <main>
-                    <h2></h2>
+                    <h2>{page.Center}</h2>
                     <div id=""htmlEditor"">
-                        <!-- Editor will be initialized here -->
+                        <!--Center Editor will be initialized here -->
                     </div>
                     <!-- Add main content here -->
                 </main>
 
                 <aside>
-                    <h2></h2>
+                    <h2>{page.Right}</h2>
+                    <div id=""htmlRihtEditor"">
+                        <!--Right Editor will be initialized here -->
+                    </div>
                     <!-- Add right sidebar content here -->
                 </aside>
             </section>
 
             <footer>
-                <p></p>
+                <p>{page.Footer}</p>
+                <div id=""htmlFooterEditor"">
+                        <!--Footer Editor will be initialized here -->
+                    </div>
             </footer>
 
             <script>
@@ -77,6 +171,49 @@
                             console.error(error);
                         }});
                 }});
+
+
+                document.addEventListener('DOMContentLoaded', (event) => {{
+                    ClassicEditor
+                        .create(document.querySelector('#htmlHeaderEditor'))
+                        .catch(error => {{
+                            console.error(error);
+                        }});
+                }});
+
+                document.addEventListener('DOMContentLoaded', (event) => {{
+                    ClassicEditor
+                        .create(document.querySelector('#htmlLeftEditor'))
+                        .catch(error => {{
+                            console.error(error);
+                        }});
+                }});
+
+               document.addEventListener('DOMContentLoaded', (event) => {{
+                    ClassicEditor
+                        .create(document.querySelector('#htmlRihtEditor'))
+                        .catch(error => {{
+                            console.error(error);
+                        }});
+                }});
+
+             document.addEventListener('DOMContentLoaded', (event) => {{
+                    ClassicEditor
+                        .create(document.querySelector('#htmlFooterEditor'))
+                        .catch(error => {{
+                            console.error(error);
+                        }});
+                }});
             </script>
         </body>
-        </html>
+        </html>";
+
+
+            // Save the HTML content to a file (you might want to specify a unique file name)
+            string filePath = $"wwwroot/pages/{id}.html";
+            System.IO.File.WriteAllText(filePath, htmlContent);
+
+            return RedirectToAction("Index"); // Redirect to the page listing
+        }
+    }
+}
