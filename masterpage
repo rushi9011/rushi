@@ -217,3 +217,29 @@ namespace UserApplication.Controllers
         }
     }
 }
+
+
+
+
+
+
+ // GET: YourController/Delete/5
+    public IActionResult Delete(int id)
+    {
+        var model = _yourModelService.GetById(id);
+        if (model == null)
+        {
+            return NotFound();
+        }
+
+        return View(model);
+    }
+
+    // POST: YourController/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        _yourModelService.Delete(id);
+        return RedirectToAction(nameof(Index));
+    }
