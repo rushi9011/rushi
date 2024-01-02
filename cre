@@ -215,3 +215,67 @@ public class PageSectionController : Controller
     }
 </body>
 </html>
+
+
+--------------new code---------------------------------------
+
+@model PageSections
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Page</title>
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+</head>
+<body>
+    <h2>Edit Page</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div>
+                <label asp-for="Header"></label>
+                <input asp-for="Header" class="form-control" />
+                <span asp-validation-for="Header" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Footer"></label>
+                <input asp-for="Footer" class="form-control" />
+                <span asp-validation-for="Footer" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Left"></label>
+                <textarea asp-for="Left" class="form-control ckeditor"></textarea>
+                <span asp-validation-for="Left" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Right"></label>
+                <textarea asp-for="Right" class="form-control ckeditor"></textarea>
+                <span asp-validation-for="Right" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Center"></label>
+                <textarea asp-for="Center" class="form-control ckeditor"></textarea>
+                <span asp-validation-for="Center" class="text-danger"></span>
+            </div>
+
+            <div>
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    }
+
+    <script>
+        CKEDITOR.replaceAll('ckeditor');
+    </script>
+</body>
+</html>
+
