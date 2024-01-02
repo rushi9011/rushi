@@ -1,0 +1,49 @@
+@model Html_Section.Models.PageModel
+
+<!-- Include CKEditor script and stylesheets -->
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+
+<!-- Other HTML content -->
+
+<div id="htmlEditor">@Html.Raw(Model.Center)</div>
+
+<!-- Other HTML content -->
+
+<form asp-action="Edit">
+    <div class="form-group">
+        <label asp-for="Header"></label>
+        <textarea asp-for="Header" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Header" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Left"></label>
+        <textarea asp-for="Left" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Left" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Right"></label>
+        <textarea asp-for="Right" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Right" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Center"></label>
+        <textarea asp-for="Center" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Center" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Footer"></label>
+        <textarea asp-for="Footer" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Footer" class="text-danger"></span>
+    </div>
+
+    <input type="submit" value="Save" />
+</form>
+
+<!-- Initialize CKEditor on textarea elements with class 'ckeditor' -->
+<script>
+    CKEDITOR.replaceAll('ckeditor');
+</script>
